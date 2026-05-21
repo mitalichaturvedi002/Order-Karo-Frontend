@@ -1,101 +1,143 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+} from "react-router-dom";
 
-// Auth Pages
-import Signup from "./pages/Signup";
-import Login from "./pages/Login";
-import ForgetPassword from "./pages/ForgetPassword";
+import Login from "./Login";
+import Signup from "./Signup";
+import Navbar from "./Navbar";
+import "./App.css";
 
-// App Pages
-import Home from "./pages/Home";
-
-// Shop Pages
-import MyShops from "./pages/shop/MyShops";
-import CreateShop from "./pages/shop/CreateShop";
-import EditShop from "./pages/shop/EditShop";
-
-// Item Pages
-import CreateItem from "./pages/item/CreateItem";
-import EditItem from "./pages/item/EditItem";
-
-// Orders Page
-import Orders from "./pages/orders/Orders";
-
-
-
-// OrderHistory Page
-import OrderHistory from "./pages/orders/OrderHistory";
-
-// Outlet Page
-import HelpCenter from "./pages/outlet/HelpCenter";
-
-// Routes
-import PublicRoute from "./routes/PublicRoute";
-import ProtectedRoute from "./routes/ProtectedRoute";
-import OwnerRoute from "./routes/OwnerRoutes";
-
-// Hooks
-import useGetCurrentUser from "./hooks/useGetCurrentUser";
-import useGetCity from "./hooks/useGetCity";
-import useGetMyShop from "./hooks/useGetMyShop";
-
-import OwnerDashboard from "./components/OwnerDashboard";
-
-
-
-
-const App = () => {
-  useGetCurrentUser();
-  useGetCity();
-  useGetMyShop();
-  const loading = useSelector((state) => state.user.loading);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-orange-600 text-xl font-bold">Loading...</p>
-      </div>
-    );
-  }
+function Home() {
+  const parkingTypes = [
+    {
+      title: "Bike Parking",
+      icon: "🏍️",
+      slots: "120 Slots Available",
+      fee: "₹20 / Hour",
+      color: "#38bdf8",
+    },
+    {
+      title: "Car Parking",
+      icon: "🚗",
+      slots: "250 Slots Available",
+      fee: "₹50 / Hour",
+      color: "#22c55e",
+    },
+    {
+      title: "Auto Parking",
+      icon: "🛺",
+      slots: "80 Slots Available",
+      fee: "₹30 / Hour",
+      color: "#f59e0b",
+    },
+  ];
 
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route element={<PublicRoute />}>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forget-password" element={<ForgetPassword />} />
-      </Route>
+    <div className="app">
 
-      {/* Protected Routes */}
-      <Route element={<ProtectedRoute />}>
+      {/* Navbar */}
+      <nav className="navbar">
+        <div className="logo-section">
+          <div className="logo">P</div>
+          <h2>Smart Parking</h2>
+        </div>
+
+        <div className="search-box">
+          <input
+            type="text"
+            placeholder="Search Parking..."
+          />
+          <button>Search</button>
+        </div>
+
+        <div className="nav-buttons">
+          <button className="about-btn">About</button>
+          <button className="login-btn">Login</button>
+        </div>
+      </nav>
+      <Navbar />
+
+      {/* Hero */}
+      <section className="hero">
+        <h1>Smart Vehicle Parking System</h1>
+
+        <p>
+          Manage Bike, Car and Auto Parking Easily
+        </p>
+      </section>
+
+      {/* Parking Cards */}
+      <section className="parking-section">
+        <div className="parking-grid">
+          {parkingTypes.map((item, index) => (
+            <div
+              className="parking-card"
+              key={index}
+              style={{
+                border: `2px solid ${item.color}`,
+              }}
+            >
+              <div
+                className="parking-icon"
+                style={{
+                  background: item.color,
+                }}
+              >
+                {item.icon}
+              </div>
+
+              <h2>{item.title}</h2>
+
+              <p>{item.slots}</p>
+
+              <div
+                className="fee-box"
+                style={{
+                  background: `${item.color}22`,
+                  color: item.color,
+                }}
+              >
+                Parking Fee: {item.fee}
+              </div>
+
+              <button
+                style={{
+                  background: item.color,
+                }}
+              >
+                View Parking
+              </button>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
         <Route path="/" element={<Home />} />
 
-        {/* Owner Only Routes */}
-        <Route element={<OwnerRoute />}>
-          <Route element={<OwnerDashboard />}>
-            {/* Dashboard pages */}
-            <Route path="dashboard/create-shop" element={<CreateShop />} />
-            <Route path="/dashboard/orders" element={<Orders />} />
-            <Route path="/dashboard/my-shops" element={<MyShops />} />
-            <Route path="/dashboard/order-history" element={<OrderHistory />} />
-            <Route path="/dashboard/help" element={<HelpCenter />} />
+        <Route
+          path="/login"
+          element={
+            <>
+              <Navbar />
+              <Login />
+            </>
+          }
+        />
 
-            <Route path="/edit-shop/:shopId" element={<EditShop />} />
-            <Route path="/create-item" element={<CreateItem />} />
-            <Route path="/edit-item/:itemId" element={<EditItem />} />
-
-            {/* Default redirect */}
-            <Route
-              index
-              element={<Navigate to="/dashboard/orders" replace />}
-            />
-          </Route>
-        </Route>
-      </Route>
-    </Routes>
+        <Route path="/signup" element={<Signup />} />
+      </Routes>
+    </BrowserRouter>
   );
-};
+}
 
 export default App;
